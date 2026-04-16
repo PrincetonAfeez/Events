@@ -274,22 +274,17 @@ class EventShell(cmd.Cmd):
         del arg
         self._emit_line("")
         return True
+    
+    def _describe_subscription(self, subscription: Subscription) -> str:
+        event_types = ", ".join(sorted(subscription.event_types)) or "all types"
+        severities = ", ".join(severity.name for severity in sorted(subscription.severities)) or "all severities"
+        return (
+            f"{subscription.subscription_id} -> {subscription.name} "
+            f"(types: {event_types}; severities: {severities})"
+        )
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    def _emit_line(self, text: str) -> None:
+        self.stdout.write(f"{text}\n")
 
 def main() -> int:
     shell = EventShell()
