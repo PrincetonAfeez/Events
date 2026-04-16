@@ -267,6 +267,13 @@ class EventShell(cmd.Cmd):
         del arg
         return True
 
+    def do_quit(self, arg: str) -> bool:
+        return self.do_exit(arg)
+
+    def do_EOF(self, arg: str) -> bool:
+        del arg
+        self._emit_line("")
+        return True
 
 
 
