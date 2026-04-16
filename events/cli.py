@@ -247,6 +247,21 @@ class EventShell(cmd.Cmd):
         replayed = self.bus.replay(events)
         self._emit_line(f"Replayed {replayed} event(s).")
 
+    def do_log(self, arg: str) -> None:
+        limit_text = arg.strip()
+        try:
+            limit = int(limit_text) if limit_text else None
+        except ValueError:
+            self._emit_line("log error: limit must be an integer.")
+            return
+
+        records = self.log_handler.tail(limit)
+        self._emit_line("Log records:")
+        if not records:
+            self._emit_line("  (empty)")
+            return
+        for record in records:
+            self._emit_line(f"  - {record}")
 
 
 
