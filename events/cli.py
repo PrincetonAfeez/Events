@@ -37,6 +37,12 @@ class EventShell(cmd.Cmd):
             name="alert",
             severities=[Severity.WARNING, Severity.CRITICAL],
         )
+    
+    def emptyline(self) -> None:
+        return None
+    
+    def default(self, line: str) -> None:
+        self._emit_line(f"Unknown command: {line}. Type 'help' for available commands.")
 
 
 
