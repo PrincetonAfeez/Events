@@ -213,6 +213,24 @@ class EventShell(cmd.Cmd):
 
         self._emit_line(f"Acknowledged alert {alert.alert_id}.")
 
+    def do_resolve(self, arg: str) -> None:
+        parser = _CommandParser(prog="resolve", add_help=False)
+        parser.add_argument("alert_id")
+        parser.add_argument("notes", nargs="+")
+
+        try:
+            args = parser.parse_args(shlex.split(arg))
+        except ValueError as error:
+            self._emit_line(f"resolve error: {error}")
+            return
+
+        try:
+            alert = self.alert_manager.resolve_alert(args.alert_id, " ".join(args.notes))
+        except (KeyError, ValueError) as error:
+            self._emit_line(f"resolve error: {error}")
+            return
+
+        self._emit_line(f"Resolved alert {alert.alert_id}.")
 
 
 
