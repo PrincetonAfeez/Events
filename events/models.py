@@ -99,3 +99,10 @@ class Alert:
 
         self.state = AlertState.RESOLVED
         self.resolution_notes = notes
+
+def format_event(event: Event) -> str:
+    timestamp = event.timestamp.astimezone(UTC).isoformat(timespec="seconds")
+    return (
+        f"[{timestamp}] {event.severity.name:<8} "
+        f"{event.source:<16} {event.event_type:<24} {event.message}"
+    )
