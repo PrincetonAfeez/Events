@@ -232,6 +232,21 @@ class EventShell(cmd.Cmd):
 
         self._emit_line(f"Resolved alert {alert.alert_id}.")
 
+    def do_replay(self, arg: str) -> None:
+        count_text = arg.strip()
+        try:
+            limit = int(count_text) if count_text else None
+        except ValueError:
+            self._emit_line("replay error: count must be an integer.")
+            return
+
+        events = self.bus.history
+        if limit is not None:
+            events = events[-limit:]
+
+        replayed = self.bus.replay(events)
+        self._emit_line(f"Replayed {replayed} event(s).")
+
 
 
 
