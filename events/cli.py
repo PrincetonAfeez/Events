@@ -44,6 +44,43 @@ class EventShell(cmd.Cmd):
     def default(self, line: str) -> None:
         self._emit_line(f"Unknown command: {line}. Type 'help' for available commands.")
 
+    def do_publish(self, arg: str) -> None:
+        if not arg.strip():
+            source = input("Source: ").strip()
+            event_type = input("Event type: ").strip()
+            severity = input("Severity (INFO/WARNING/CRITICAL): ").strip()
+            message = input("Message: ").strip()
+        else:
+            parser = _CommandParser(prog="publish", add_help=False)
+            parser.add_argument("source")
+            parser.add_argument("event_type")
+            parser.add_argument("severity")
+            parser.add_argument("message", nargs="+")
+            try:
+                args = parser.parse_args(shlex.split(arg))
+            except ValueError as error:
+                self._emit_line(f"publish error: {error}")
+                return
+
+            source = args.source
+            event_type = args.event_type
+            severity = args.severity
+            message = " ".join(args.message)
+
+        try:
+            event = Event(
+                source=source,
+                event_type=event_type,
+                severity=Severity.from_value(severity),
+                message=message,
+            )
+        except ValueError as error:
+            self._emit_line(f"publish error: {error}")
+            return
+
+        dispatched = self.bus.publish(event)
+        if not dispatched:
+            self._emit_line("Event suppressed by deduplication.")
 
 
 
