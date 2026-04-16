@@ -108,4 +108,12 @@ class EventBus:
             self._dispatch(event, record_history=False)
         return len(sequence)
 
+    def _dispatch(self, event: Event, *, record_history: bool) -> None:
+        if record_history:
+            self._history.append(event)
+
+        for subscription in tuple(self._subscriptions.values()):
+            if subscription.matches(event):
+                subscription.handler(event)
+
 
