@@ -11,6 +11,11 @@ from .handlers import AlertHandler, ConsoleHandler, LogHandler
 from .models import AlertState, Event, Severity, format_alert, format_event
 
 
+class _CommandParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        raise ValueError(message)
+
+
 
 
 
