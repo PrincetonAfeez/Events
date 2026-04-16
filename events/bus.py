@@ -61,3 +61,29 @@ class EventBus:
     def restore_history_snapshot(self, events: list[Event] | tuple[Event, ...]) -> None:
         self._history.clear()
         self._history.extend(events)
+
+    
+    def subscribe(
+        self,
+        handler: Handler,
+        *,
+        name: str | None = None,
+        event_types: list[str] | tuple[str, ...] | set[str] | None = None,
+        severities: list[Severity | str] | tuple[Severity | str, ...] | set[Severity | str] | None = None,
+    ) -> str:
+        subscription_id = f"sub-{next(self._sequence)}"
+        resolved_name = name or getattr(handler, "__name__", handler.__class__.__name__)
+        normalized_event_types = frozenset(item.strip() for item in (event_types or []) if item.strip())
+        normalized_severities = frozenset(
+            Severity.from_value(severity)
+            for severity in (severities or [])
+        )
+
+        self._subscriptions[subscription_id] = Subscription(
+            subscription_id=subscription_id,
+            name=resolved_name,
+            handler=handler,
+            event_types=normalized_event_types,
+            severities=normalized_severities,
+        )
+        return subscription_id
