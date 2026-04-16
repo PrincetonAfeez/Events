@@ -127,6 +127,18 @@ class EventShell(cmd.Cmd):
 
         self._emit_line(f"Subscribed {args.handler} as {subscription_id}.")
 
+    def do_unsubscribe(self, arg: str) -> None:
+        subscription_id = arg.strip()
+        if not subscription_id:
+            self._emit_line("unsubscribe error: subscription id is required.")
+            return
+
+        if self.bus.unsubscribe(subscription_id):
+            self._emit_line(f"Removed subscription {subscription_id}.")
+            return
+
+        self._emit_line(f"unsubscribe error: no subscription found for {subscription_id}.")
+
 
 
 
