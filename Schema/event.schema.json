@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./event.schema.json",
+  "title": "Event",
+  "description": "Core event payload for the Vault OS event engine.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "source": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Component or system that produced the event."
+    },
+    "event_type": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Category or name of the event."
+    },
+    "severity": {
+      "$ref": "./severity.schema.json"
+    },
+    "message": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable event message."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "UTC ISO-8601 timestamp for the event."
+    },
+    "event_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique event identifier."
+    }
+  },
+  "required": [
+    "source",
+    "event_type",
+    "severity",
+    "message"
+  ],
+  "examples": [
+    {
+      "source": "camera-7",
+      "event_type": "motion_detected",
+      "severity": "WARNING",
+      "message": "Motion detected in loading bay.",
+      "timestamp": "2026-04-12T18:00:00Z",
+      "event_id": "550e8400-e29b-41d4-a716-446655440000"
+    }
+  ]
+}

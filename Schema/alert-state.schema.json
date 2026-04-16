@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./alert-state.schema.json",
+  "title": "AlertState",
+  "description": "Lifecycle state for an Alert.",
+  "type": "string",
+  "enum": [
+    "new",
+    "acknowledged",
+    "resolved"
+  ]
+}

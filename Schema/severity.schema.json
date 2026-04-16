@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./severity.schema.json",
+  "title": "Severity",
+  "description": "Severity level used by Event and Alert models.",
+  "type": "string",
+  "enum": [
+    "INFO",
+    "WARNING",
+    "CRITICAL"
+  ]
+}

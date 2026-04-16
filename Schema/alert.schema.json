@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./alert.schema.json",
+  "title": "Alert",
+  "description": "Alert wrapper around an Event for warning and critical conditions.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "event": {
+      "$ref": "./event.schema.json"
+    },
+    "state": {
+      "$ref": "./alert-state.schema.json"
+    },
+    "acknowledged_by": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "User who acknowledged the alert."
+    },
+    "acknowledged_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time",
+      "description": "UTC ISO-8601 time when the alert was acknowledged."
+    },
+    "resolution_notes": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Notes recorded when the alert was resolved."
+    },
+    "alert_id": {
+      "type": "string",
+      "format": "uuid",
+      "readOnly": true,
+      "description": "Derived from event.event_id."
+    },
+    "source": {
+      "type": "string",
+      "readOnly": true,
+      "description": "Derived from event.source."
+    },
+    "severity": {
+      "$ref": "./severity.schema.json",
+      "readOnly": true
+    }
+  },
+  "required": [
+    "event",
+    "state"
+  ],
+  "examples": [
+    {
+      "event": {
+        "source": "sensor-1",
+        "event_type": "temp_threshold_exceeded",
+        "severity": "WARNING",
+        "message": "Server room exceeded temperature threshold.",
+        "timestamp": "2026-04-12T18:00:00Z",
+        "event_id": "550e8400-e29b-41d4-a716-446655440000"
+      },
+      "state": "acknowledged",
+      "acknowledged_by": "operator-1",
+      "acknowledged_at": "2026-04-12T18:01:00Z",
+      "resolution_notes": null,
+      "alert_id": "550e8400-e29b-41d4-a716-446655440000",
+      "source": "sensor-1",
+      "severity": "WARNING"
+    }
+  ]
+}

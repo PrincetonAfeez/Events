@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./subscription.schema.json",
+  "title": "Subscription",
+  "description": "Serializable view of an EventBus subscription.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "subscription_id": {
+      "type": "string",
+      "pattern": "^sub-[0-9]+$",
+      "description": "Unique identifier assigned by EventBus."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable subscription name."
+    },
+    "handler_name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Serializable handler label in place of the callable object."
+    },
+    "event_types": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true,
+      "default": [],
+      "description": "Empty array means all event types."
+    },
+    "severities": {
+      "type": "array",
+      "items": {
+        "$ref": "./severity.schema.json"
+      },
+      "uniqueItems": true,
+      "default": [],
+      "description": "Empty array means all severities."
+    }
+  },
+  "required": [
+    "subscription_id",
+    "name"
+  ],
+  "examples": [
+    {
+      "subscription_id": "sub-1",
+      "name": "alert",
+      "handler_name": "AlertHandler",
+      "event_types": [],
+      "severities": [
+        "WARNING",
+        "CRITICAL"
+      ]
+    }
+  ]
+}
