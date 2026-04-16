@@ -59,3 +59,43 @@ class Event:
         object.__setattr__(self, "message", message)
         object.__setattr__(self, "severity", severity)
         object.__setattr__(self, "timestamp", timestamp)
+
+
+@dataclass(slots=True)
+class Alert:
+    event: Event
+    state: AlertState = AlertState.NEW
+    acknowledged_by: str | None = None
+    acknowledged_at: datetime | None = None
+    resolution_notes: str | None = None
+
+    @property
+    def alert_id(self) -> str:
+        return self.event.event_id
+
+    @property
+    def source(self) -> str:
+        return self.event.source
+
+    @property
+    def severity(self) -> Severity:
+        return self.event.severity
+
+    def acknowledge(self, user: str, when: datetime | None = None) -> None:
+        user = user.strip()
+        if not user:
+            raise ValueError("Acknowledged-by cannot be empty.")
+        if self.state == AlertState.RESOLVED:
+            raise ValueError("Resolved alerts cannot be acknowledged.")
+
+        self.state = AlertState.ACKNOWLEDGED
+        self.acknowledged_by = user
+        self.acknowledged_at = when or datetime.now(UTC)
+
+    def resolve(self, notes: str) -> None:
+        notes = notes.strip()
+        if not notes:
+            raise ValueError("Resolution notes cannot be empty.")
+
+        self.state = AlertState.RESOLVED
+        self.resolution_notes = notes
