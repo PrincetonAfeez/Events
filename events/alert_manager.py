@@ -18,3 +18,9 @@ class AlertManager:
         alert = Alert(event=event)
         self._alerts[alert.alert_id] = alert
         return alert
+    
+    def get_alert(self, alert_id: str) -> Alert:
+        try:
+            return self._alerts[alert_id]
+        except KeyError as error:
+            raise KeyError(f"No alert found for id '{alert_id}'.") from error
