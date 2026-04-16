@@ -22,3 +22,8 @@ class Subscription:
         severity_match = not self.severities or event.severity in self.severities
         return event_type_match and severity_match
 
+@dataclass(slots=True)
+class _SuppressionState:
+    timestamps: deque[datetime] = field(default_factory=deque)
+    summary_emitted: bool = False
+    suppressed_count: int = 0
