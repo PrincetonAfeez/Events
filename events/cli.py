@@ -82,6 +82,28 @@ class EventShell(cmd.Cmd):
         if not dispatched:
             self._emit_line("Event suppressed by deduplication.")
 
+    def do_handlers(self, arg: str) -> None:
+        del arg
+        self._emit_line("Available handlers:")
+        for name in sorted(self._available_handlers):
+            self._emit_line(f"  - {name}")
+
+        subscriptions = self.bus.list_subscriptions()
+        self._emit_line("Active subscriptions:")
+        if not subscriptions:
+            self._emit_line("  (none)")
+            return
+        for subscription in subscriptions:
+            self._emit_line(f"  - {self._describe_subscription(subscription)}")
+
+
+
+
+
+
+
+
+
 
 
 
