@@ -263,6 +263,9 @@ class EventShell(cmd.Cmd):
         for record in records:
             self._emit_line(f"  - {record}")
 
+    def do_exit(self, arg: str) -> bool:
+        del arg
+        return True
 
 
 
