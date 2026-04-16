@@ -106,3 +106,20 @@ def format_event(event: Event) -> str:
         f"[{timestamp}] {event.severity.name:<8} "
         f"{event.source:<16} {event.event_type:<24} {event.message}"
     )
+
+def format_alert(alert: Alert) -> str:
+    parts = [
+        f"id={alert.alert_id}",
+        f"state={alert.state.value}",
+        f"severity={alert.severity.name}",
+        f"source={alert.source}",
+        f"type={alert.event.event_type}",
+        f"message={alert.event.message}",
+    ]
+    if alert.acknowledged_by:
+        parts.append(f"ack_by={alert.acknowledged_by}")
+    if alert.acknowledged_at:
+        parts.append(f"ack_at={alert.acknowledged_at.astimezone(UTC).isoformat(timespec='seconds')}")
+    if alert.resolution_notes:
+        parts.append(f"resolution={alert.resolution_notes}")
+    return " | ".join(parts)
