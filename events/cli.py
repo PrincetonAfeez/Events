@@ -96,6 +96,37 @@ class EventShell(cmd.Cmd):
         for subscription in subscriptions:
             self._emit_line(f"  - {self._describe_subscription(subscription)}")
 
+    def do_subscribe(self, arg: str) -> None:
+        parser = _CommandParser(prog="subscribe", add_help=False)
+        parser.add_argument("handler")
+        parser.add_argument("--type", dest="event_types", action="append", default=[])
+        parser.add_argument("--severity", dest="severities", action="append", default=[])
+
+        try:
+            args = parser.parse_args(shlex.split(arg))
+        except ValueError as error:
+            self._emit_line(f"subscribe error: {error}")
+            return
+
+        handler = self._available_handlers.get(args.handler)
+        if handler is None:
+            available = ", ".join(sorted(self._available_handlers))
+            self._emit_line(f"subscribe error: unknown handler '{args.handler}'. Available: {available}.")
+            return
+
+        try:
+            subscription_id = self.bus.subscribe(
+                handler,
+                name=args.handler,
+                event_types=args.event_types,
+                severities=args.severities,
+            )
+        except ValueError as error:
+            self._emit_line(f"subscribe error: {error}")
+            return
+
+        self._emit_line(f"Subscribed {args.handler} as {subscription_id}.")
+
 
 
 
