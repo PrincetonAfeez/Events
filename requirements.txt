@@ -1,0 +1,6 @@
+# Runtime: Python standard library only (see pyproject.toml).
+# Install the project in editable mode, then tests:
+#   pip install -e ".[dev]"
+#
+# Minimal test-only install:
+pytest>=8.0
