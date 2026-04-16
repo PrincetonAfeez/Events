@@ -24,3 +24,8 @@ class AlertManager:
             return self._alerts[alert_id]
         except KeyError as error:
             raise KeyError(f"No alert found for id '{alert_id}'.") from error
+    
+    def acknowledge_alert(self, alert_id: str, user: str) -> Alert:
+        alert = self.get_alert(alert_id)
+        alert.acknowledge(user)
+        return alert
