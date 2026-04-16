@@ -34,3 +34,11 @@ class LogHandler:
     def replace_captured_events(self, events: list[Event], records: list[str]) -> None:
         self.events = list(events)
         self.records = list(records)
+
+class AlertHandler:
+    def __init__(self, alert_manager: AlertManager) -> None:
+        self.alert_manager = alert_manager
+
+    def __call__(self, event: Event) -> None:
+        if event.severity >= Severity.WARNING:
+            self.alert_manager.create_alert(event)
