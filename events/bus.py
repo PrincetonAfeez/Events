@@ -27,3 +27,29 @@ class _SuppressionState:
     timestamps: deque[datetime] = field(default_factory=deque)
     summary_emitted: bool = False
     suppressed_count: int = 0
+
+
+class EventBus:
+    SUMMARY_EVENT_TYPE = "suppression_summary"
+
+    def __init__(
+        self,
+        *,
+        max_history: int = 100,
+        dedup_threshold: int = 3,
+        dedup_window: timedelta = timedelta(seconds=60),
+    ) -> None:
+        if max_history <= 0:
+            raise ValueError("max_history must be greater than zero.")
+        if dedup_threshold <= 0:
+            raise ValueError("dedup_threshold must be greater than zero.")
+        if dedup_window.total_seconds() <= 0:
+            raise ValueError("dedup_window must be greater than zero.")
+
+        self.max_history = max_history
+        self.dedup_threshold = dedup_threshold
+        self.dedup_window = dedup_window
+        self._history: deque[Event] = deque(maxlen=max_history)
+        self._subscriptions: dict[str, Subscription] = {}
+        self._suppression_windows: dict[tuple[str, str], _SuppressionState] = {}
+        self._sequence = count(1)
