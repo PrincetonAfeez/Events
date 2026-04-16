@@ -158,6 +158,42 @@ class EventShell(cmd.Cmd):
         for event in events:
             self._emit_line(f"  - {format_event(event)}")
 
+    def do_alerts(self, arg: str) -> None:
+        parser = _CommandParser(prog="alerts", add_help=False)
+        parser.add_argument("--all", action="store_true")
+        parser.add_argument("--severity")
+        parser.add_argument("--source")
+        parser.add_argument("--unacknowledged", action="store_true")
+
+        try:
+            args = parser.parse_args(shlex.split(arg))
+        except ValueError as error:
+            self._emit_line(f"alerts error: {error}")
+            return
+
+        severity = None
+        if args.severity:
+            try:
+                severity = Severity.from_value(args.severity)
+            except ValueError as error:
+                self._emit_line(f"alerts error: {error}")
+                return
+
+        alerts = self.alert_manager.filter_alerts(
+            severity=severity,
+            source=args.source,
+            include_resolved=args.all,
+        )
+        if args.unacknowledged:
+            alerts = tuple(alert for alert in alerts if alert.state == AlertState.NEW)
+
+        self._emit_line("Alerts:")
+        if not alerts:
+            self._emit_line("  (none)")
+            return
+        for alert in alerts:
+            self._emit_line(f"  - {format_alert(alert)}")
+
 
 
 
