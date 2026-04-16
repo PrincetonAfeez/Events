@@ -53,3 +53,11 @@ class EventBus:
         self._subscriptions: dict[str, Subscription] = {}
         self._suppression_windows: dict[tuple[str, str], _SuppressionState] = {}
         self._sequence = count(1)
+
+    @property
+    def history(self) -> tuple[Event, ...]:
+        return tuple(self._history)
+
+    def restore_history_snapshot(self, events: list[Event] | tuple[Event, ...]) -> None:
+        self._history.clear()
+        self._history.extend(events)
