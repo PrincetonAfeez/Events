@@ -139,6 +139,24 @@ class EventShell(cmd.Cmd):
 
         self._emit_line(f"unsubscribe error: no subscription found for {subscription_id}.")
 
+    def do_history(self, arg: str) -> None:
+        limit_text = arg.strip()
+        try:
+            limit = int(limit_text) if limit_text else None
+        except ValueError:
+            self._emit_line("history error: limit must be an integer.")
+            return
+
+        events = self.bus.history
+        if limit is not None:
+            events = events[-limit:]
+
+        self._emit_line("Event history:")
+        if not events:
+            self._emit_line("  (empty)")
+            return
+        for event in events:
+            self._emit_line(f"  - {format_event(event)}")
 
 
 
