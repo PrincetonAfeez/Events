@@ -194,6 +194,25 @@ class EventShell(cmd.Cmd):
         for alert in alerts:
             self._emit_line(f"  - {format_alert(alert)}")
 
+    def do_ack(self, arg: str) -> None:
+        parser = _CommandParser(prog="ack", add_help=False)
+        parser.add_argument("alert_id")
+        parser.add_argument("user")
+
+        try:
+            args = parser.parse_args(shlex.split(arg))
+        except ValueError as error:
+            self._emit_line(f"ack error: {error}")
+            return
+
+        try:
+            alert = self.alert_manager.acknowledge_alert(args.alert_id, args.user)
+        except (KeyError, ValueError) as error:
+            self._emit_line(f"ack error: {error}")
+            return
+
+        self._emit_line(f"Acknowledged alert {alert.alert_id}.")
+
 
 
 
