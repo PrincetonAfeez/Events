@@ -101,4 +101,11 @@ class EventBus:
             self._dispatch(item, record_history=True)
             dispatched.append(item)
         return tuple(dispatched)
+    
+    def replay(self, events: list[Event] | tuple[Event, ...] | None = None) -> int:
+        sequence = tuple(events if events is not None else self.history)
+        for event in sequence:
+            self._dispatch(event, record_history=False)
+        return len(sequence)
+
 
