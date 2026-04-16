@@ -115,5 +115,41 @@ class EventBus:
         for subscription in tuple(self._subscriptions.values()):
             if subscription.matches(event):
                 subscription.handler(event)
+    
+    def _events_to_dispatch(self, event: Event) -> list[Event]:
+        if event.event_type == self.SUMMARY_EVENT_TYPE:
+            return [event]
 
+        key = (event.source, event.event_type)
+        state = self._suppression_windows.setdefault(key, _SuppressionState())
+        cutoff = event.timestamp - self.dedup_window
+
+        while state.timestamps and state.timestamps[0] < cutoff:
+            state.timestamps.popleft()
+
+        if len(state.timestamps) < self.dedup_threshold:
+            state.summary_emitted = False
+            state.suppressed_count = 0
+
+        state.timestamps.append(event.timestamp)
+        if len(state.timestamps) <= self.dedup_threshold:
+            return [event]
+
+        state.suppressed_count += 1
+        if state.summary_emitted:
+            return []
+
+        state.summary_emitted = True
+        summary = Event(
+            source=event.source,
+            event_type=self.SUMMARY_EVENT_TYPE,
+            severity=event.severity,
+            message=(
+                f"Deduplication engaged for '{event.event_type}' from {event.source} "
+                f"after more than {self.dedup_threshold} events in "
+                f"{int(self.dedup_window.total_seconds())} seconds."
+            ),
+            timestamp=event.timestamp,
+        )
+        return [summary]
 
