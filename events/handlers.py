@@ -16,3 +16,21 @@ class ConsoleHandler:
 
     def __call__(self, event: Event) -> None:
         self._emit(format_event(event))
+
+class LogHandler:
+    def __init__(self) -> None:
+        self.events: list[Event] = []
+        self.records: list[str] = []
+
+    def __call__(self, event: Event) -> None:
+        self.events.append(event)
+        self.records.append(format_event(event))
+
+    def tail(self, limit: int | None = None) -> tuple[str, ...]:
+        if limit is None or limit >= len(self.records):
+            return tuple(self.records)
+        return tuple(self.records[-limit:])
+
+    def replace_captured_events(self, events: list[Event], records: list[str]) -> None:
+        self.events = list(events)
+        self.records = list(records)
