@@ -94,4 +94,11 @@ class EventBus:
     
     def list_subscriptions(self) -> tuple[Subscription, ...]:
         return tuple(self._subscriptions.values())
+    
+    def publish(self, event: Event) -> tuple[Event, ...]:
+        dispatched: list[Event] = []
+        for item in self._events_to_dispatch(event):
+            self._dispatch(item, record_history=True)
+            dispatched.append(item)
+        return tuple(dispatched)
 
