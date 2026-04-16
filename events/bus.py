@@ -87,3 +87,11 @@ class EventBus:
             severities=normalized_severities,
         )
         return subscription_id
+    
+    def unsubscribe(self, subscription_id: str) -> bool:
+        return self._subscriptions.pop(subscription_id, None) is not None
+
+    
+    def list_subscriptions(self) -> tuple[Subscription, ...]:
+        return tuple(self._subscriptions.values())
+
