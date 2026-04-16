@@ -24,3 +24,8 @@ class Severity(IntEnum):
 
     def __str__(self) -> str:
         return self.name
+
+class AlertState(StrEnum):
+    NEW = "new"
+    ACKNOWLEDGED = "acknowledged"
+    RESOLVED = "resolved"
